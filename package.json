@@ -1,0 +1,32 @@
+{
+  "name": "service-commande",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mspr-micro-services/service-commande.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mspr-micro-services/service-commande/issues"
+  },
+  "homepage": "https://github.com/mspr-micro-services/service-commande#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.30.0",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2"
+  }
+}
