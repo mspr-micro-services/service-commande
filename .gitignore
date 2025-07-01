@@ -58,3 +58,5 @@ test-output/
 
 # Prettier
 .prettierignore
+
+.test-commande.js
