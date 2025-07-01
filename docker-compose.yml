@@ -1,0 +1,23 @@
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: mongo-service-commande
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  service-commande:
+    build: .
+    container_name: service-commande
+    restart: on-failure
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+
+volumes:
+  mongo-data:
