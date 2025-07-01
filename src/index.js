@@ -1,36 +1,35 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
+import 'dotenv/config';
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import authRouter from './routes/auth.js';
 
 const app = express();
+const PORT = process.env.PORT;
 
-// Middleware JSON
 app.use(express.json());
 
-// Route racine
-app.get("/", (req, res) => {
-  res.status(200).json({ message: "Service Commande OK" });
+// Middleware d'authentification
+export const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.status(401).json({ error: 'Token manquant' });
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ error: 'Token invalide' });
+    req.user = user;
+    next();
+  });
+};
+
+// Route d'authentification
+app.use('/auth', authRouter);
+
+// Exemple de route protégée (à adapter pour les commandes)
+app.get('/protected', authenticateToken, (req, res) => {
+  res.json({ message: 'Accès autorisé', user: req.user });
 });
 
-// Connexion MongoDB
-const mongoUri =
-  process.env.MONGO_URI || "mongodb://localhost:27017/service-commande";
-
-mongoose
-  .connect(mongoUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("MongoDB connecté");
-    // Démarrage serveur après connexion DB
-    const port = process.env.PORT || 3001;
-    app.listen(port, () => {
-      console.log(`Service commande démarré sur le port ${port}`);
-    });
-  })
-  .catch((err) => {
-    console.error("Erreur de connexion MongoDB:", err);
-  });
-
-module.exports = app;
+app.listen(PORT, () => {
+  console.log(`Service Commande démarré sur le port ${PORT}`);
+});
