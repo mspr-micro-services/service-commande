@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import authMiddleware from './middlewares/auth.js';
 import authRouter from './routes/auth.js';
+import commandeRoutes from './routes/commandeRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT;
@@ -30,6 +32,17 @@ app.get('/protected', authenticateToken, (req, res) => {
   res.json({ message: 'Accès autorisé', user: req.user });
 });
 
+app.use('/commandes', authMiddleware, commandeRoutes); 
+
 app.listen(PORT, () => {
   console.log(`Service Commande démarré sur le port ${PORT}`);
 });
+
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`Service Commande démarré sur le port ${PORT}`);
+  });
+}
+
+export default app;
