@@ -1,0 +1,61 @@
+import Commande from '../models/commande.js';
+
+// CRÉER une commande
+export const creerCommande = async (req, res, next) => {
+  try {
+    const commande = new Commande(req.body);
+    const commandeEnregistree = await commande.save();
+    res.locals.commande = commandeEnregistree;
+    res.status(201).json(commandeEnregistree);
+    next();
+  } catch (erreur) {
+    res.status(400).json({ message: erreur.message });
+  }
+};
+
+// LIRE toutes les commandes
+export const lireToutesCommandes = async (req, res) => {
+  try {
+    const commandes = await Commande.find();
+    res.json(commandes);
+  } catch (erreur) {
+    res.status(500).json({ message: erreur.message });
+  }
+};
+
+// LIRE une commande par ID
+export const lireCommandeParId = async (req, res) => {
+  try {
+    const commande = await Commande.findById(req.params.id);
+    if (!commande) return res.status(404).json({ message: 'Commande non trouvée' });
+    res.json(commande);
+  } catch (erreur) {
+    res.status(500).json({ message: erreur.message });
+  }
+};
+
+// MODIFIER une commande
+export const modifierCommande = async (req, res, next) => {
+  try {
+    const commandeModifiee = await Commande.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!commandeModifiee) return res.status(404).json({ message: 'Commande non trouvée' });
+    res.locals.commande = commandeModifiee;
+    res.json(commandeModifiee);
+    next();
+  } catch (erreur) {
+    res.status(400).json({ message: erreur.message });
+  }
+};
+
+// SUPPRIMER une commande
+export const supprimerCommande = async (req, res, next) => {
+  try {
+    const commandeSupprimee = await Commande.findByIdAndDelete(req.params.id);
+    if (!commandeSupprimee) return res.status(404).json({ message: 'Commande non trouvée' });
+    res.locals.commande = commandeSupprimee;
+    res.json({ message: 'Commande supprimée' });
+    next();
+  } catch (erreur) {
+    res.status(500).json({ message: erreur.message });
+  }
+}; 
