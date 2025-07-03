@@ -27,7 +27,8 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.1",
-    "test": "jest --detectOpenHandles --forceExit"
+    "test": "jest --detectOpen",
+    "kafkajs": "^2.2.4"
   },
   "devDependencies": {
     "eslint": "^9.30.0",

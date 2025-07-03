@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   mongo:
     image: mongo:6.0
@@ -8,6 +10,43 @@ services:
     volumes:
       - mongo-data:/data/db
 
+  mongo-express:
+    image: mongo-express:1.0.0-alpha.4
+    container_name: mongo-express-service-commande
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=password
+    depends_on:
+      - mongo
+
+  zookeeper:
+    image: bitnami/zookeeper:3.8
+    container_name: zookeeper-service-commande
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  kafka:
+    image: bitnami/kafka:3.6
+    container_name: kafka-service-commande
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper
+
   service-commande:
     build: .
     container_name: service-commande
@@ -16,8 +55,12 @@ services:
       - "3001:3001"
     env_file:
       - .env
+    environment:
+      - KAFKA_BROKER=kafka:9092
+      - MONGO_URL=mongodb://mongo:27017/service-commande
     depends_on:
       - mongo
+      - kafka
 
 volumes:
   mongo-data:

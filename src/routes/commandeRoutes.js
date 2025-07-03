@@ -1,19 +1,23 @@
-// src/routes/commandeRoutes.js
 import express from 'express';
 import {
-    createCommande,
-    deleteCommande,
-    getAllCommandes,
-    getCommandeById,
-    updateCommande,
+    creerCommande,
+    lireCommandeParId,
+    lireToutesCommandes,
+    modifierCommande,
+    supprimerCommande
 } from '../controllers/commandeController.js';
+import { kafkaEvenementCommande } from '../middlewares/kafkaEvenementCommande.js';
 
-const router = express.Router();
+const routeur = express.Router();
 
-router.post('/', createCommande);
-router.get('/', getAllCommandes);
-router.get('/:id', getCommandeById);
-router.put('/:id', updateCommande);
-router.delete('/:id', deleteCommande);
+routeur.post('/', creerCommande, kafkaEvenementCommande('cree'));
 
-export default router;
+routeur.get('/', lireToutesCommandes);
+
+routeur.get('/:id', lireCommandeParId);
+
+routeur.put('/:id', modifierCommande, kafkaEvenementCommande('modifie'));
+
+routeur.delete('/:id', supprimerCommande, kafkaEvenementCommande('supprime'));
+
+export default routeur;

@@ -60,3 +60,4 @@ test-output/
 .prettierignore
 
 .test-commande.js
+.gen-jwt.js
