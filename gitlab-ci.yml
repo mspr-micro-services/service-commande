@@ -1,0 +1,27 @@
+stages :
+- build
+- deploy
+- test
+
+deploy_job:
+ stage : deploy
+ script: 
+ - echo "deploy_job on $ENVIRONMENT"
+ variables:
+ - ENVIRONMENT : "test"
+
+build_job:
+ stage: build
+ script: 
+ - echo "build job"
+
+test_job:
+ stage : test
+ script : 
+  - echo "test"
+
+job:
+  script: npm install
+  cache:
+   pathes: 
+    - node module/
