@@ -3,7 +3,7 @@ import app from '../src/index.js';
 import jwt from 'jsonwebtoken';
 
 describe('Route /protected', () => {
-  const secret = process.env.JWT_SECRET || 'supersecret';
+  const secret = process.env.JWT_SECRET;
   const token = jwt.sign({ username: 'test', role: 'admin' }, secret);
 
   it('doit refuser sans token', async () => {

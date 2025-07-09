@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { authenticateToken } from '../../src/middlewares/auth.js';
 
 describe('Middleware authenticateToken', () => {
-  const secret = process.env.JWT_SECRET || 'supersecret';
+  const secret = process.env.JWT_SECRET;
   const user = { username: 'test', role: 'admin' };
   const token = jwt.sign(user, secret);
 
