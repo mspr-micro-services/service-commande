@@ -17,4 +17,18 @@ export function authenticateToken(req, res, next) {
   });
 }
 
+/**
+ * Restreint l'accès à une route selon un rôle
+ * @param {string|string[]} roles - Rôle ou liste de rôles autorisés
+ */
+export function authorizeRole(roles) {
+  const allowedRoles = Array.isArray(roles) ? roles : [roles];
+  return (req, res, next) => {
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: "Accès interdit : rôle insuffisant" });
+    }
+    next();
+  };
+}
+
 export default authenticateToken;

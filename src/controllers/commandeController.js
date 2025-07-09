@@ -1,4 +1,4 @@
-import Commande from '../models/commande.js';
+import Commande from "../models/commande.js";
 
 export const creerCommande = async (req, res, next) => {
   try {
@@ -24,33 +24,42 @@ export const lireToutesCommandes = async (req, res) => {
 export const lireCommandeParId = async (req, res) => {
   try {
     const commande = await Commande.findById(req.params.id);
-    if (!commande) return res.status(404).json({ message: 'Commande non trouvée' });
+    if (!commande) return res.status(404).json({ message: "Commande non trouvée" });
     res.json(commande);
   } catch (erreur) {
-    res.status(500).json({ message: erreur.message });
+    console.error("Erreur lecture commande par ID:", erreur);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 };
 
 export const modifierCommande = async (req, res, next) => {
   try {
-    const commandeModifiee = await Commande.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!commandeModifiee) return res.status(404).json({ message: 'Commande non trouvée' });
+    const commandeModifiee = await Commande.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!commandeModifiee) return res.status(404).json({ message: "Commande non trouvée" });
     res.locals.commande = commandeModifiee;
     res.json(commandeModifiee);
     if (next) next();
   } catch (erreur) {
-    res.status(400).json({ message: erreur.message });
+    console.error("Erreur modification commande:", erreur);
+    if (erreur.name === "ValidationError") {
+      return res.status(400).json({ message: erreur.message });
+    }
+    res.status(500).json({ message: "Erreur serveur" });
   }
 };
 
 export const supprimerCommande = async (req, res, next) => {
   try {
     const commandeSupprimee = await Commande.findByIdAndDelete(req.params.id);
-    if (!commandeSupprimee) return res.status(404).json({ message: 'Commande non trouvée' });
+    if (!commandeSupprimee) return res.status(404).json({ message: "Commande non trouvée" });
     res.locals.commande = commandeSupprimee;
-    res.json({ message: 'Commande supprimée' });
+    res.json({ message: "Commande supprimée" });
     if (next) next();
   } catch (erreur) {
-    res.status(500).json({ message: erreur.message });
+    console.error("Erreur suppression commande:", erreur);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 };
