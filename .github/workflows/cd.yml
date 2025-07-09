@@ -1,0 +1,32 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+jobs:
+  docker:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      # Récupère le code source du repository
+      - uses: actions/checkout@v4
+
+      # Installe Node.js pour builder
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Installe les dépendances
+      - run: npm ci
+
+      # Construit l’image Docker et la tag avec le SHA du commit
+      - run: docker build -t ghcr.io/mspr-micro-services/service-commande:${{ github.sha }} .
+
+      # Se connecte au GitHub Container Registry pour pouvoir pousser l’image
+      - run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      # Pousse l’image Docker sur le registry GitHub
+      - run: docker push ghcr.io/mspr-micro-services/service-commande:${{ github.sha }}
