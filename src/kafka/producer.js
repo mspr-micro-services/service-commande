@@ -1,7 +1,7 @@
-import { Kafka } from 'kafkajs';
+import { Kafka } from "kafkajs";
 
 const kafka = new Kafka({
-  clientId: 'service-commande',
+  clientId: "service-commande",
   brokers: [process.env.KAFKA_BROKER],
 });
 
@@ -14,10 +14,8 @@ export const connecterProducteurKafka = async () => {
 export const envoyerEvenementCommande = async (topic, message) => {
   await producteurKafka.send({
     topic,
-    messages: [
-      { value: JSON.stringify(message) },
-    ],
+    messages: [{ value: JSON.stringify(message) }],
   });
 };
 
-export default producteurKafka; 
+export default producteurKafka;
