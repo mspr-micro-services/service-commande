@@ -8,6 +8,17 @@ export default [
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: "module",
+      globals: {
+        console: true,
+        process: true,
+        __dirname: true,
+        __filename: true,
+        Buffer: true,
+        setTimeout: true,
+        setInterval: true,
+        clearTimeout: true,
+        clearInterval: true,
+      },
     },
     plugins: {
       import: importPlugin,
@@ -31,6 +42,8 @@ export default [
         afterAll: true,
         beforeEach: true,
         afterEach: true,
+        console: true,
+        process: true,
       },
     },
     rules: {
