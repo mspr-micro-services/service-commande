@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { connecterProducteurKafka } from './kafka/producer.js';
+import { initializeKafka, setupGracefulShutdown } from './kafka/index.js';
 import app from './index.js';
 
 const PORT = process.env.PORT;
@@ -10,10 +10,11 @@ mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     console.log('Connexion à MongoDB réussie');
     app.listen(PORT, async () => {
       try {
-        await connecterProducteurKafka();
-        console.log('Producteur Kafka connecté');
+        await initializeKafka();
+        setupGracefulShutdown();
+        console.log('Services Kafka initialisés avec succès');
       } catch (err) {
-        console.error('Erreur de connexion au producteur Kafka :', err);
+        console.error('Erreur de connexion aux services Kafka :', err);
       }
       console.log(`Service Commande démarré sur le port ${PORT}`);
     });

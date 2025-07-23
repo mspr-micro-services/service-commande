@@ -1,4 +1,4 @@
-import { envoyerEvenementCommande } from '../kafka/producer.js';
+import { kafkaProducerService } from '../kafka/producer.js';
 
 /**
  * Middleware pour publier un événement Kafka après une action CRUD sur une commande.
@@ -34,17 +34,21 @@ export const kafkaEvenementCommande = (typeEvenement) => {
         return next();
       }
 
-      // Envoi de l'événement Kafka
-      await envoyerEvenementCommande('commandes', {
-        evenement: typeEvenement,
-        commande,
-        date: new Date().toISOString(),
-        metadata: {
-          timestamp: Date.now(),
-          source: 'service-commande',
-          version: '1.0.0'
-        }
-      });
+      // Envoi de l'événement Kafka selon le type
+      switch (typeEvenement) {
+        case 'cree':
+          await kafkaProducerService.publishCommandeCreated(commande);
+          break;
+        case 'modifie':
+          await kafkaProducerService.publishCommandeUpdated(commande);
+          break;
+        case 'supprime':
+          await kafkaProducerService.publishCommandeDeleted(commande);
+          break;
+        default:
+          // Pour les autres types, utiliser la méthode générique
+          await kafkaProducerService.publishCommandeEvent(typeEvenement, commande);
+      }
 
       next();
     } catch (error) {
@@ -61,4 +65,4 @@ export const kafkaEvenementCommande = (typeEvenement) => {
       next();
     }
   };
-}; 
+};

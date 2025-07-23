@@ -27,11 +27,4 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Erreur serveur" });
 });
 
-if (process.env.NODE_ENV !== "test") {
-  const PORT = process.env.PORT;
-  app.listen(PORT, () => {
-    console.log(`Service Commande démarré sur le port ${PORT}`);
-  });
-}
-
 export default app;
